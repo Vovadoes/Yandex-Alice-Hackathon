@@ -10,4 +10,4 @@ class FeedTheMaster(BonusBase):
         ) # получи уровень
 
     def use_bonus(self, req, hero):  # используем бонус, улучшаем героя
-        pass
+        hero["level"] += 1

@@ -10,5 +10,5 @@ class FlamePoisonPotion(BonusBase):
         )
 
     def use_bonus(self, req, hero):  # используем бонус, улучшаем героя
-        pass
+        hero["bonus_strength"] += 3
     

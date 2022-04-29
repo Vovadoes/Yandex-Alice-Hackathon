@@ -10,5 +10,5 @@ class FriendshipPotion(BonusBase):
         )
 
     def use_bonus(self, req, hero):  # используем бонус, улучшаем героя
-        pass
+        hero["monster"] = None
     

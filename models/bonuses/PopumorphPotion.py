@@ -10,5 +10,7 @@ class PopumorphPotion(BonusBase):
         )
 
     def use_bonus(self, req, hero):  # используем бонус, улучшаем героя
-        pass
+        monster = hero["monster"]
+        hero["monster"] = None
+        return {'monster': monster}
     

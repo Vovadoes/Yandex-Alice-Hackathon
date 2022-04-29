@@ -7,7 +7,7 @@ class Gold1000(BonusBase):
             '1000 Голдов',
             '1000 Голдов',
             1000
-        ) # получи уровань
+        )
 
     def use_bonus(self, req, hero):  # используем бонус, улучшаем героя
-        pass
+        hero["level"] += 1
