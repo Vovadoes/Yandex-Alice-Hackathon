@@ -66,8 +66,9 @@ def handle_dialog(req, res):
     user_id = req['session']['user_id']
 
     if req['session']['new']:
-        sessionStorage[user_id] = {'is_started': False, 'level': 1, 'epoch': '11', 'weapon': [],
-                                   'class': None,
+        sessionStorage[user_id] = {'level': 1, 'epoch': '11', 'weapon': [],
+                                   'class': None, 'monster': None, 'overall_strength': 0,
+                                   'bonus_strength': 0, 'money': 0,
                                    'armor': {'head': None, 'body': None, 'leg': None},
                                    'cards_on_hands': [], 'is_alive': True,
                                    'what_treasures_stay': list(range(len(dict_treasures))),
@@ -101,6 +102,7 @@ def handle_dialog(req, res):
                                           ' но вы увидели несколько дверей, в которых могут' \
                                           ' таяться монстры и проклятья.... Берегите себя,' \
                                           ' да будет игра!!!\n'
+                # берем и удалем id
                 ids_treasures = random.sample(sessionStorage[user_id]['what_treasures_stay'],
                                               4)  # берем id сокровищ
                 ids_doors = random.sample(sessionStorage[user_id]['what_doors_stay'],
@@ -122,10 +124,11 @@ def handle_dialog(req, res):
                 sessionStorage[user_id]['cards_on_hands'] = sort_cards(user_id)
                 # даем ответ для алисы
                 text = show_names(user_id)  # создаем текст для вывода всех предметов
-                res['response']['text'] += '---------\n'
+                res['response']['text'] += '<---------\n'
                 res['response']['text'] += text
-                res['response']['text'] += find_free_cards(user_id)  # какие карты можно положить?
-                res['response']['text'] += '---------\n'
+                k, text = find_free_cards(user_id)  # какие карты можно положить?
+                res['response']['text'] += text
+                res['response']['text'] += '--------->\n'
                 res['response']['text'] += 'Какие карты вы хотите положить на стол? (номера)'
                 res['response']['buttons'] = [{'title': 'Никакие', 'hide': True}]
                 sessionStorage[user_id]['epoch'] = '2'  # начинаем игру
@@ -162,14 +165,16 @@ def handle_dialog(req, res):
             text_res = req['request']['original_utterance'].lower()
             if 'никакие' in text_res:  # ничего не хочет выкладывать
                 res['response']['text'] = 'Вы отказались класть карты!\n'
-                res['response']['text'] += '---------\n'
+                res['response']['text'] += '<---------\n'
                 res['response']['text'] += 'Хорошо, на вашем столе:\n'
                 res['response']['text'] += show_names(user_id)
-                res['response']['text'] += '---------\n'
-                res['response'][
-                    'text'] += 'Вы стучитесь в дверь и вам выпадает: (выпавшая карта)'  # доделать
-                sessionStorage[user_id]['epoch'] = '24'
-                res['response']['buttons'] = [{'title': 'Никакие', 'hide': True}]
+                res['response']['text'] += '--------->\n'
+                # доп вопрос
+                res['response']['text'] += 'Вы готовы открыть дверь?\n'
+                res['response']['buttons'] = [{'title': 'Да', 'hide': True},
+                                              {'title': 'Нет', 'hide': True}]
+                sessionStorage[user_id]['epoch'] = '22'
+                # след
                 return
             num = []
 
@@ -186,10 +191,11 @@ def handle_dialog(req, res):
             if len(num) == 0:
                 res['response'][
                     'text'] = 'В вашем ответе отсутствуют цифры! Введите цифры! Например 1, 2...\n'
-                res['response']['text'] += '---------\n'
+                res['response']['text'] += '<---------\n'
                 res['response']['text'] += show_names(user_id)
-                res['response']['text'] += find_free_cards(user_id)  # какие карты можно положить?
-                res['response']['text'] += '---------\n'
+                k, text = find_free_cards(user_id)  # какие карты можно положить?
+                res['response']['text'] += text
+                res['response']['text'] += '--------->\n'
                 res['response']['text'] += 'Какие карты вы хотите положить на стол? (номера)'
                 res['response']['buttons'] = [{'title': 'Никакие', 'hide': True}]
                 return
@@ -199,11 +205,11 @@ def handle_dialog(req, res):
                 if int(x) <= 0 or int(x) > len(sessionStorage[user_id]['cards_on_hands']):
                     res['response'][
                         'text'] += f'Ошибка! Вы должны говорить цифры в диапазоне от 1 до {len(sessionStorage[user_id]["cards_on_hands"])}\n'
-                    res['response']['text'] += '---------\n'
+                    res['response']['text'] += '<---------\n'
                     res['response']['text'] += show_names(user_id)
-                    res['response']['text'] += find_free_cards(
-                        user_id)  # какие карты можно положить?
-                    res['response']['text'] += '---------\n'
+                    k, text = find_free_cards(user_id)  # какие карты можно положить?
+                    res['response']['text'] += text
+                    res['response']['text'] += '--------->\n'
                     res['response']['text'] += 'Какие карты вы хотите положить на стол? (номера)'
                     res['response']['buttons'] = [{'title': 'Никакие', 'hide': True}]
                     return
@@ -211,20 +217,177 @@ def handle_dialog(req, res):
                                               num])  # t - без ошибок? cards - текст функции
             if t:
                 res['response']['text'] += 'Вы выбрали карточки:\n' + cards
-                res['response']['text'] += '---------\n'
+                res['response']['text'] += '<---------\n'
+                res['response']['text'] += 'Хорошо, на вашем столе:\n'
                 res['response']['text'] += show_names(user_id)
-                res['response']['text'] += '---------\n'
-
+                res['response']['text'] += '--------->\n'
+                k, text = find_free_cards(user_id)
+                if k == 0:
+                    # доп вопрос
+                    res['response']['text'] += 'Вы готовы открыть дверь?\n'
+                    res['response']['buttons'] = [{'title': 'Да', 'hide': True},
+                                                  {'title': 'Нет', 'hide': True}]
+                    sessionStorage[user_id]['epoch'] = '22'
+                    # след
+                else:
+                    res['response'][
+                        'text'] += 'У вас есть карты, которые можно положить! Хотите это сделать?'
+                    res['response']['buttons'] = [{'title': 'Да', 'hide': True},
+                                                  {'title': 'Нет', 'hide': True}]
+                    sessionStorage[user_id]['epoch'] = '21'
             else:
                 res['response']['text'] += 'Ошибка!\n' + cards
-                res['response']['text'] += '---------\n'
+                res['response']['text'] += '<---------\n'
                 res['response']['text'] += show_names(user_id)
-                res['response']['text'] += find_free_cards(
-                    user_id)  # какие карты можно положить?
-                res['response']['text'] += '---------\n'
+                k, text = find_free_cards(user_id)  # какие карты можно положить?
+                res['response']['text'] += text
+                res['response']['text'] += '--------->\n'
                 res['response']['text'] += 'Какие карты вы хотите положить на стол? (номера)'
                 res['response']['buttons'] = [{'title': 'Никакие', 'hide': True}]
                 return
+        elif sessionStorage[user_id]['epoch'] == '21':  # хочет ли положить еще карты?
+            if req['request']['original_utterance'].lower() in ['да']:
+                res['response']['text'] = 'Хорошо! Ваши характеритики:\n'
+                text = show_names(user_id)  # создаем текст для вывода всех предметов
+                res['response']['text'] += '<---------\n'
+                res['response']['text'] += text
+                k, text = find_free_cards(user_id)  # какие карты можно положить?
+                res['response']['text'] += text
+                res['response']['text'] += '--------->\n'
+                res['response']['text'] += 'Какие карты вы хотите положить на стол? (номера)'
+                res['response']['buttons'] = [{'title': 'Никакие', 'hide': True}]
+                sessionStorage[user_id]['epoch'] = '2'
+            elif req['request']['original_utterance'].lower() in ['нет']:
+                res['response']['text'] = 'Вы отказались выкладывать карты, хорошо, идем дальше!\n'
+                sessionStorage[user_id]['epoch'] = '24'
+            else:  # не поняли
+                res['response']['text'] = 'Я вас не поняла, извините... Так да или нет?'
+                res['response']['buttons'] = [{'title': 'Да', 'hide': True},
+                                              {'title': 'Нет', 'hide': True}]
+        elif sessionStorage[user_id]['epoch'] == '22':  # хочет открывать дверь?
+            if req['request']['original_utterance'].lower() in ['да']:  # ОТКРЫВАЕМ ДВЕРЬ
+                res['response']['text'] = f'Вы стучитесь в дверь и ...\n'  # доделать
+                class_card = pull_out_card_door(user_id, res)  # открываем дверь
+                if class_card == 1:  # пользователю попался монстр
+                    sessionStorage[user_id]['epoch'] = '20'
+                    # text = catch_bonus(user_id)
+                    # res['response']['text'] += text
+                elif class_card == 3:  # пользователь получил проклятье
+                    pass
+                elif class_card == 4:  # выпала расса
+                    pass
+                # sessionStorage[user_id]['epoch'] = '24'
+                # показываем карту и смотря какой класс используем функцию
+            elif req['request']['original_utterance'].lower() in ['нет']:
+                res['response']['text'] = 'Вы хотите выйти из игры?\n'
+                res['response']['buttons'] = [{'title': 'Да', 'hide': True},
+                                              {'title': 'Нет', 'hide': True}]
+                sessionStorage[user_id]['epoch'] = '23'
+            else:  # не поняли
+                res['response']['text'] = 'Я вас не поняла, извините... Так да или нет?'
+                res['response']['buttons'] = [{'title': 'Да', 'hide': True},
+                                              {'title': 'Нет', 'hide': True}]
+        elif sessionStorage[user_id]['epoch'] == '20':  # Будет ли сражаться герой?
+            if req['request']['original_utterance'].lower() in ['да']:
+                n = fight_with_monster(user_id, res)
+                if n == 1:  # может победить
+                    text = catch_bonus(user_id)
+                    res['response']['text'] += text
+                else:  # не может победить
+                    pass
+            elif req['request']['original_utterance'].lower() in ['нет']:  # УБЕГАЕМ
+                pass
+            else:  # не поняли
+                res['response']['text'] = 'Я вас не поняла, извините... Так да или нет?'
+                res['response']['buttons'] = [{'title': 'Да', 'hide': True},
+                                              {'title': 'Нет', 'hide': True}]
+        elif sessionStorage[user_id]['epoch'] == '23':  # уходит из игры?
+            if req['request']['original_utterance'].lower() in ['да']:
+                res['response']['text'] = 'Приходите когда будете готовы! До скорых встреч!'
+                res['response']['end_session'] = True
+            elif req['request']['original_utterance'].lower() in ['нет']:  # ОТКРЫВАЕМ ДВЕРЬ
+                res['response'][
+                    'text'] = f'Тогда сама дверь открывается, не дождавшись вас, и ...\n'  # доделать
+                class_card = pull_out_card_door(user_id, res)  # открываем дверь
+                if class_card == 1:  # пользователю попался монстр
+                    sessionStorage[user_id]['epoch'] = '20'
+                elif class_card == 2:  # пользователь проигрывает монстра
+                    pass
+                elif class_card == 3:  # пользователь получил проклятье
+                    pass
+                elif class_card == 4:  # выпала расса
+                    pass
+                sessionStorage[user_id]['epoch'] = '24'
+                # показываем карту и смотря какой класс используем функцию
+            else:  # не поняли
+                res['response']['text'] = 'Я вас не поняла, извините... Так да или нет?'
+                res['response']['buttons'] = [{'title': 'Да', 'hide': True},
+                                              {'title': 'Нет', 'hide': True}]
+
+
+def catch_bonus(user_id):  # текст для вывода награды
+    text = ''
+    ids = random.sample(sessionStorage[user_id]['what_treasures_stay'],
+                        sessionStorage[user_id]['monster'].count_gem)
+    kol = 1
+    text += f'{kol}) + {sessionStorage[user_id]["monster"].count_level} level\n'
+    kol += 1
+    sessionStorage[user_id]['level'] += sessionStorage[user_id]['monster'].count_level
+    for i in ids:
+        bonus = dict_treasures[i]
+        if bonus[0] == 0:  # получи уровень ...
+            bonus = BonusBase(*bonus[1:])
+            text += f'{kol}) Название: {bonus.title}; Стоимость: {bonus.price}\n'
+        else:  # одежда
+            clothes = ArmamentBase(*bonus[1:])
+            text += f'{kol}) Название: {clothes.title}; Стоимость: {clothes.price}\n'
+        kol += 1
+    return text
+
+
+def pull_out_card_door(user_id, res):  # Вытягиваем карту двери
+    what_bring = random.randint(1, 10)
+    if what_bring == 10:  # проклятье
+        prokl = CurseBase(*random.choice(proklates)[1:])
+        res['response']['text'] += f'Вам выпало проклятье: {prokl.title}\n'
+        res['response']['text'] += f'Но вы остались живи и продолжаете путешествовать!\n'
+        return 3
+    elif what_bring == 9:  # раса
+        res['response']['text'] += f'Вам выпала новая раса: -\n'
+        return 4
+    else:  # монстр
+        id = random.choice(sessionStorage[user_id]['what_doors_stay'])
+        monstr = MonsterBase(*dict_doors_for_hero[id][1:])
+        res['response']['text'] += f'Вам выпал: {monstr.title}\n'
+        res['response']['text'] += f'Его level: {monstr.level}\n'
+        res['response'][
+            'text'] += f'Если вы победите, то получите:\n1) {monstr.count_gem} сокровищ\n2) +{monstr.count_level} level\n'
+        res['response'][
+            'text'] += f'Но если вы проиграете, то вас подействует непотребство:\n"{monstr.bad_things}"\n'
+        res['response']['text'] += '---------\n'
+        res['response'][
+            'text'] += 'Чтобы его победить у вас должно быть силы на одну больше! Вы готовы сражаться?'
+        # закрепляем монстра к герою
+        sessionStorage[user_id]['monster'] = monstr
+        res['response']['buttons'] = [{'title': 'Да', 'hide': True},
+                                      {'title': 'Нет', 'hide': True}]
+        return 1
+
+
+def fight_with_monster(user_id, res):
+    monstr = sessionStorage[user_id]['monster']
+    if monstr.level < sessionStorage[user_id]['overall_strength'] + sessionStorage[user_id][
+        'level']:
+        res['response'][
+            'text'] = 'Вы сразились с ним и победили его в честном бою! Поздравляем! Вы можете тянуть награду!\n'
+        return 1
+    else:
+        res['response'][
+            'text'] = 'У вас не хватает силы, чтобы победить его! Вы хотите использовать бонусы?\n'
+        res['response']['buttons'] = [{'title': 'Да', 'hide': True},
+                                      {'title': 'Нет', 'hide': True}]
+        sessionStorage[user_id]['epoch'] = '25'
+        return 2
 
 
 def is_all_right(user_id, nums):  # проверяем на правильность выбора карт
@@ -293,19 +456,25 @@ def is_all_right(user_id, nums):  # проверяем на правильнос
     if len(cards_choose['head']) != 0:
         sessionStorage[user_id]['armor']['head'] = cards_choose['head'][0]
         all_names_cards += f"{cards_choose['head'][0].title}\n"
+        sessionStorage[user_id]['overall_strength'] += cards_choose['head'][0].bonus
     if len(cards_choose['body']) != 0:
         sessionStorage[user_id]['armor']['body'] = cards_choose['body'][0]
         all_names_cards += f"{cards_choose['body'][0].title}\n"
+        sessionStorage[user_id]['overall_strength'] += cards_choose['body'][0].bonus
     if len(cards_choose['leg']) != 0:
         sessionStorage[user_id]['armor']['leg'] = cards_choose['leg'][0]
         all_names_cards += f"{cards_choose['leg'][0].title}\n"
+        sessionStorage[user_id]['overall_strength'] += cards_choose['leg'][0].bonus
     if len(cards_choose['weapon']) != 0:
         sessionStorage[user_id]['weapon'] = cards_choose['weapon']
         if len(cards_choose['weapon']) == 1:
             all_names_cards += f"{cards_choose['weapon'][0].title}\n"
+            sessionStorage[user_id]['overall_strength'] += cards_choose['weapon'][0].bonus
         else:
             all_names_cards += f"{cards_choose['weapon'][0].title}\n"
             all_names_cards += f"{cards_choose['weapon'][1].title}\n"
+            sessionStorage[user_id]['overall_strength'] += cards_choose['weapon'][0].bonus
+            sessionStorage[user_id]['overall_strength'] += cards_choose['weapon'][1].bonus
     if len(cards_choose['Race']) != 0:
         sessionStorage[user_id]['class'] = cards_choose['Race'][0]
         all_names_cards += f"{cards_choose['Race'][0].title}\n"
@@ -348,20 +517,29 @@ def find_free_cards(user_id):  # передаю num от 1 - бес
                 if sessionStorage[user_id]['armor']['leg'] is None:
                     d['leg'].append(str(i + 1))
     text = 'Вы можете положить:\n'
+    kol = 0
     for k, v in d.items():
         if k == 'class' and len(d['class']) != 0:
             text += f'Раса: {", ".join(sorted(v))}\n'
+            kol += 1
         if k == 'weapon' and len(d['weapon']) != 0:
             text += f'Оружие: {", ".join(sorted(v))}\n'
+            kol += 1
         if k == 'head' and len(d['head']) != 0:
             text += f'Головняк: {", ".join(sorted(v))}\n'
+            kol += 1
         if k == 'body' and len(d['body']) != 0:
             text += f'Броник: {", ".join(sorted(v))}\n'
+            kol += 1
         if k == 'leg' and len(d['leg']) != 0:
             text += f'Поножи: {", ".join(sorted(v))}\n'
+            kol += 1
         if k == 'bonus' and len(d['bonus']) != 0:
             text += f'Получи уровень: {", ".join(sorted(v))}\n'
-    return text
+            kol += 1
+    if kol == 0:
+        text = 'Вы можете положить: -\n'
+    return kol, text
 
 
 def sort_cards(user_id):  # сортировка карт в руке
@@ -380,6 +558,7 @@ def show_names(user_id):  # показ амундирования
     list_obj = sessionStorage[user_id]['cards_on_hands']
     text = ''
     text += f'Ваш level: {sessionStorage[user_id]["level"]}\n'
+    text += f'Ваша сила: {sessionStorage[user_id]["overall_strength"] + sessionStorage[user_id]["level"]}\n'
     if weapon != []:  # оружие
         if len(weapon) == 1 or weapon[0].title == weapon[1].title:
             text += f'Ваше оружие:\n1) {weapon[0].title} (+{weapon[0].bonus} к силе)\n'

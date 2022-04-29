@@ -11,4 +11,3 @@ class InvisibilityPotion(BonusBase):
 
     def use_bonus(self, req, hero):  # используем бонус, улучшаем героя
         pass
-    
