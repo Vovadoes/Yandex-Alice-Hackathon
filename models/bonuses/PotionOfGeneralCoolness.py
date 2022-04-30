@@ -1,4 +1,4 @@
-import BonusBase
+from .BonusBase import BonusBase
 
 
 class PotionOfGeneralCoolness(BonusBase):

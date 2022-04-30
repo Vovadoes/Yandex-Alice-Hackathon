@@ -1,6 +1,6 @@
 from random import choice
+from .MonsterBase import MonsterBase
 
-import MonsterBase
 
 
 class Leprechaun(MonsterBase):

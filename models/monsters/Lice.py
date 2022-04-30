@@ -1,4 +1,4 @@
-import MonsterBase
+from .MonsterBase import MonsterBase
 
 
 class Lice(MonsterBase):

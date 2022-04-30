@@ -1,6 +1,5 @@
 from models.bonuses.ApplyIncomprehensibleRules import ApplyIncomprehensibleRules
 from models.bonuses.BoilTheAnthill import BoilTheAnthill
-from models.bonuses.BonusBase import BonusBase
 from models.bonuses.ColdBlastPotion import ColdBlastPotion
 from models.bonuses.ConvenientAdditionError import ConvenientAdditionError
 from models.bonuses.CoolBalls import CoolBalls

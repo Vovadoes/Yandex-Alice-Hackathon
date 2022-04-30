@@ -1,6 +1,6 @@
 from random import choice
 
-import CurseBase
+from .CurseBase import CurseBase
 
 
 class UnbearablyVileCurseLoseYourRandomStuff(CurseBase):

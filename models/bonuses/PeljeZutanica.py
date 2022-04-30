@@ -1,4 +1,5 @@
-import BonusBase
+from .BonusBase import BonusBase
+
 
 
 class PeljeZutanica(BonusBase):

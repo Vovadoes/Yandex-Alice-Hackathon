@@ -13,7 +13,6 @@ from models.monsters.Kalmadzilla import Kalmadzilla
 from models.monsters.Leprechaun import Leprechaun
 from models.monsters.Lice import Lice
 from models.monsters.Mademoiselle import Mademoiselle
-from models.monsters.MonsterBase import MonsterBase
 from models.monsters.MrKostin import MrKostin
 from models.monsters.OozingMucus import OozingMucus
 from models.monsters.Orcs3872 import Orcs3872

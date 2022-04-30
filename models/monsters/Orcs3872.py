@@ -1,6 +1,6 @@
 import random
 
-import MonsterBase
+from .MonsterBase import MonsterBase
 
 
 class Orcs3872(MonsterBase):

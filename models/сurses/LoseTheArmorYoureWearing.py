@@ -1,4 +1,4 @@
-import CurseBase
+from .CurseBase import CurseBase
 
 
 class LoseTheArmorYoureWearing(CurseBase):

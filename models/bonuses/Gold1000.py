@@ -1,4 +1,4 @@
-import BonusBase
+from .BonusBase import BonusBase
 
 
 class Gold1000(BonusBase):

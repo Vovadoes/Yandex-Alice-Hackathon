@@ -1,5 +1,5 @@
 import random
-import CurseBase
+from .CurseBase import CurseBase
 
 
 class YourWeaponWasStolenWhatSlobYouAre(CurseBase):

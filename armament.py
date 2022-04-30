@@ -1,6 +1,5 @@
 from models.armament.AirShield import AirShield
 from models.armament.AnElevenFootPole import AnElevenFootPole
-from models.armament.ArmamentBase import ArmamentBase
 from models.armament.BandanaOfBastardism import BandanaOfBastardism
 from models.armament.BowWithRibbons import BowWithRibbons
 from models.armament.BucklerBraggadocio import BucklerBraggadocio

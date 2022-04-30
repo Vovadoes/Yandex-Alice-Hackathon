@@ -10,9 +10,9 @@ from models.race.RaceBase import RaceBase
 from models.сurses.CurseBase import CurseBase
 from models.armament.ArmamentBase import ArmamentBase
 from armament import *
-# from bonuses import *
-# from curses import *
-# from monsters import *
+from bonuses import *
+from curses import *
+from monsters import *
 
 app = Flask(__name__)
 run_with_ngrok(app)
@@ -42,7 +42,7 @@ dict_doors_for_game = {i: all_doors_for_game[i] for i in range(len(all_doors_for
 dict_doors_for_hero = {i: all_doors_for_hero[i] for i in range(len(all_doors_for_hero))}
 
 
-@app.route('/', methods=['POST', 'GET'])
+@app.route('/', methods=['POST'])
 def main():
     logging.info(f'Request: {request.json!r}')
 
