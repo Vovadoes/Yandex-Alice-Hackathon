@@ -1,4 +1,5 @@
-import ArmamentBase
+from .ArmamentBase import ArmamentBase
+
 
 
 class MithrilArmor(ArmamentBase):

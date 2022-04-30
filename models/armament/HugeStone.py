@@ -1,5 +1,4 @@
-import ArmamentBase
-
+from .ArmamentBase import ArmamentBase
 
 class HugeStone(ArmamentBase):
     def __init__(self):

@@ -6,7 +6,8 @@ class Gold1000(BonusBase):
         super(Gold1000, self).__init__(
             '1000 Голдов',
             '1000 Голдов',
-            1000
+            1000,
+            'Получи уровень.'
         )
 
     def use_bonus(self, req, hero):  # используем бонус, улучшаем героя

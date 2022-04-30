@@ -6,7 +6,8 @@ class BoilTheAnthill(BonusBase):
         super(BoilTheAnthill, self).__init__(
             'Вскипяти муравейник',
             'Вскипяти муравейник',
-            1000
+            1000,
+            'Получи уровень.'
         ) # получи уровень
 
     def use_bonus(self, req, hero):  # используем бонус, улучшаем героя

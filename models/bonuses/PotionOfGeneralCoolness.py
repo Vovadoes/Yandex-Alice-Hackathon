@@ -6,7 +6,8 @@ class PotionOfGeneralCoolness(BonusBase):
         super(PotionOfGeneralCoolness, self).__init__(
             'Зелье общей крутизны',
             'Зелье общей крутизны',
-            1000
+            1000,
+            'Получи уровень.'
         ) # получи уровень
 
     def use_bonus(self, req, hero):  # используем бонус, улучшаем героя

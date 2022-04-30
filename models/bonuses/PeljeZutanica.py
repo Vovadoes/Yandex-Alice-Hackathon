@@ -6,7 +6,8 @@ class PeljeZutanica(BonusBase):
         super(PeljeZutanica, self).__init__(
             'Пелье Зутаницы',
             'Играй в любой бой. +3 любой стороне. Разовая шмотка.',
-            100
+            100,
+            'Бонус +3'
         )
 
     def use_bonus(self, req, hero):  # используем бонус, улучшаем героя

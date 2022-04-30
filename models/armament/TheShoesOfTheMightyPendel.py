@@ -1,4 +1,4 @@
-import ArmamentBase
+from .ArmamentBase import ArmamentBase
 
 
 class TheShoesOfTheMightyPendel(ArmamentBase):

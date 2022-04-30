@@ -6,7 +6,8 @@ class ApplyIncomprehensibleRules(BonusBase):
         super(ApplyIncomprehensibleRules, self).__init__(
             'Примени непонятные правила',
             'Примени непонятные правила',
-            1000
+            1000,
+            'Получи уровень.'
         ) # получи уровень
 
     def use_bonus(self, req, hero):  # используем бонус, улучшаем героя
