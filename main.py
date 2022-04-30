@@ -68,7 +68,7 @@ def handle_dialog(req, res):
     if req['session']['new']:
         sessionStorage[user_id] = {'level': 1, 'epoch': '11', 'weapon': [],
                                    'class': None, 'monster': None, 'overall_strength': 0,
-                                   'bonus_strength': 0, 'money': 0,
+                                   'bonus_strength': 0, 'money': 0, 'race': None,
                                    'armor': {'head': None, 'body': None, 'leg': None},
                                    'cards_on_hands': [], 'is_alive': True,
                                    'what_treasures_stay': list(range(len(dict_treasures))),
