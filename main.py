@@ -1,4 +1,6 @@
 # flask_ngrok_example.py
+from pprint import pprint
+
 from flask import Flask, request
 from flask_ngrok import run_with_ngrok
 import logging
@@ -9,10 +11,15 @@ from models.bonuses.BonusBase import BonusBase
 from models.race.RaceBase import RaceBase
 from models.сurses.CurseBase import CurseBase
 from models.armament.ArmamentBase import ArmamentBase
-from armament import *
-from bonuses import *
-from curses import *
-from monsters import *
+from armament import armament as ar
+from bonuses import bonuses as bn
+from curses import curses as cr
+from monsters import monsters as mn
+
+pprint(ar)
+pprint(bn)
+pprint(cr)
+pprint(mn)
 
 app = Flask(__name__)
 run_with_ngrok(app)

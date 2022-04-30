@@ -21,3 +21,10 @@ from models.bonuses.RocketOfMagicalPurpose import RocketOfMagicalPurpose
 from models.bonuses.SleepingPotion import SleepingPotion
 from models.bonuses.WallInstant import WallInstant
 from models.bonuses.WentToTheBase import WentToTheBase
+
+bonuses = [ApplyIncomprehensibleRules(), BoilTheAnthill(), ColdBlastPotion(),
+           ConvenientAdditionError(), CoolBalls(), Doppelganger(), ElectroAcidRadiationPotion(),
+           FeedTheMaster(), FlamePoisonPotion(), FriendshipPotion(), Gold1000(),
+           InvisibilityPotion(), MagicLamp(), MouthStinkPotion(), NastyProtein(), PeljeZutanica(),
+           PopumorphPotion(), PotionOfGeneralCoolness(), PotionOfIdioticCourage(),
+           RocketOfMagicalPurpose(), SleepingPotion(), WallInstant(), WentToTheBase()]

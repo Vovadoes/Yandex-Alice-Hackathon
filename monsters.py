@@ -30,3 +30,10 @@ from models.monsters.WanderingNose import WanderingNose
 from models.monsters.WhoopingGik import WhoopingGik
 from models.monsters.YoungBeauty import YoungBeauty
 from models.monsters.ZakosUnderTheVampire import ZakosUnderTheVampire
+
+monsters = [Amazon(), Bigfoot(), Bulldog(), Burp(), CucumberGrass(), FaceCleaner(), FlyingFrogs(),
+            Gazebo(), GelatinOctahedron(), Harpists(), Hippogriff(), Kalmadzilla(), Leprechaun(),
+            Lice(), Mademoiselle(), MrKostin(), OozingMucus(), Orcs3872(), PaganDemon(),
+            PaleBrothers(), PitBull(), PlutoniumDragon(), TheCrippledGoblin(), TheHorseIsReliable(),
+            TheKingIsHere(), UnspeakablyTerribleIndescribableHorror(), Utconticore(),
+            WanderingNose(), WhoopingGik(), YoungBeauty(), ZakosUnderTheVampire()]

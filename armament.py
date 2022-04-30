@@ -29,3 +29,12 @@ from models.armament.TheSwordOfBreadthOfViews import TheSwordOfBreadthOfViews
 from models.armament.TheTreacherousBastardIsSword import TheTreacherousBastardIsSword
 from models.armament.TightsOfGiantStrength import TightsOfGiantStrength
 from models.armament.TreadSandals import TreadSandals
+
+armament = [AirShield(), AnElevenFootPole(), BandanaOfBastardism(), BowWithRibbons(),
+            BucklerBraggadocio(), Chainsaw(), FlamingArmor(), GentlemenIsOak(), HelmetOfCourage(),
+            HornedHelmet(), HugeStone(), KneeJackhammer(), KorotyshirokneArmor(), LeatherOutfit(),
+            MithrilArmor(), NapalmStaff(), RapierOfSuchPerson(), SlimyBarrel(), SpikedKnees(),
+            SwissArmyHalberd(), SwordOfSongAndDance(), TheCheeseGraterIsPeaceful(),
+            TheCloakOfTurbidity(), TheDaggerOfTreason(), TheMaceOfSharpness(),
+            ThePointedHatOfPower(), TheShoesOfTheMightyPendel(), TheSwordOfBreadthOfViews(),
+            TheTreacherousBastardIsSword(), TightsOfGiantStrength(), TreadSandals()]
