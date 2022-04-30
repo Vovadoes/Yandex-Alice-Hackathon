@@ -8,4 +8,4 @@ class Lose2LevelsSoThatItWontBeHabitToPickUpBirdsInTheDungeonsFromNowOn(CurseBas
         )
 
     def use_bad_things(self, req, hero):  # проклятье на нас
-        pass
+        hero["level"] = max(1, hero["level"] - 2)

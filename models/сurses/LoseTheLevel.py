@@ -8,4 +8,5 @@ class LoseTheLevel(CurseBase):
         )
 
     def use_bad_things(self, req, hero):  # проклятье на нас
-        pass
+        hero["level"] = max(1, hero["level"] - 1)
+

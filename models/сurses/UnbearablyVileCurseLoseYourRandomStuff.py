@@ -1,3 +1,5 @@
+from random import choice
+
 import CurseBase
 
 
@@ -8,4 +10,9 @@ class UnbearablyVileCurseLoseYourRandomStuff(CurseBase):
         )
 
     def use_bad_things(self, req, hero):  # проклятье на нас
-        pass
+        lst = []
+        for i in hero["armor"]:
+            if hero["armor"][i] is not None:
+                lst.append(i)
+        if len(lst) != 0:
+            hero["armor"][choice(lst)] = None

@@ -1,3 +1,4 @@
+import random
 import CurseBase
 
 
@@ -8,4 +9,5 @@ class YourWeaponWasStolenWhatSlobYouAre(CurseBase):
         )
 
     def use_bad_things(self, req, hero):  # проклятье на нас
-        pass
+        if len(hero["weapon"]) != 0:
+            del hero["weapon"][random.randint(0, len(hero["weapon"]))]

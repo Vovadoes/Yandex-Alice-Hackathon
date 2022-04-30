@@ -8,4 +8,4 @@ class LoseTheFirebrandYoureWearing(CurseBase):
         )
 
     def use_bad_things(self, req, hero):  # проклятье на нас
-        pass
+        hero["armor"]["head"] = None
