@@ -12,4 +12,4 @@ class Hippogriff(MonsterBase):
 
     def do_bad_things(self, req, hero):  # он не убежал
         hero["level"] = max(1, hero["level"] - 1)
-        hero["armor"][choice(hero["armor"].keys())] = None
+        hero["armor"][choice(list(hero["armor"].keys()))] = None
