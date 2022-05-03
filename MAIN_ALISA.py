@@ -994,7 +994,7 @@ def handle_dialog(req, res):
                         sessionStorage[user_id]['luck'] -= 1
                         sessionStorage[user_id]['class'] = None
                     elif sessionStorage[user_id]['class'] == 2:
-                        sessionStorage[user_id]['class'] = None
+                        pass
                     elif sessionStorage[user_id]['class'] == 3:
                         sessionStorage[user_id]['overall_strength'] -= 2
                     sessionStorage[user_id]['class'] = None
