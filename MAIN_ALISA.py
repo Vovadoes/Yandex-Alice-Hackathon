@@ -73,7 +73,7 @@ def handle_dialog(req, res):
 
     if req['session']['new']:
         sessionStorage[user_id] = {'level': 1, 'epoch': '11', 'weapon': [],
-                                   'class': race_cards[1], 'monster': None, 'overall_strength': 0,
+                                   'class': race_cards[random.randint(0, 2)], 'monster': None, 'overall_strength': 0,
                                    'bonus_strength': 0, 'money': 0, 'luck': 2,
                                    'armor': {'head': None, 'body': None, 'leg': None},
                                    'cards_on_hands': [], 'is_alive': True,
@@ -937,7 +937,7 @@ def handle_dialog(req, res):
             if x3 is not None:
                 main_list.append([sessionStorage[user_id]['armor']['leg'], 'leg'])
             if sessionStorage[user_id]['class'] is not None:
-                main_list.append([sessionStorage[user_id]['class'].what, 'класс'])
+                main_list.append([sessionStorage[user_id]['class'], 'класс'])
             # проверка
             input_text = req["request"]["original_utterance"].lower()
             num = []
@@ -992,8 +992,9 @@ def handle_dialog(req, res):
                 elif main_list[int(i) - 1][1] == 'класс':
                     if sessionStorage[user_id]['class'] == 1:
                         sessionStorage[user_id]['luck'] -= 1
+                        sessionStorage[user_id]['class'] = None
                     elif sessionStorage[user_id]['class'] == 2:
-                        pass
+                        sessionStorage[user_id]['class'] = None
                     elif sessionStorage[user_id]['class'] == 3:
                         sessionStorage[user_id]['overall_strength'] -= 2
                     sessionStorage[user_id]['class'] = None
@@ -1003,8 +1004,12 @@ def handle_dialog(req, res):
                 sessionStorage[user_id]['cards_on_hands'].append(i)
             res['response']['text'] = f'Вы убрали со стола:\n'
             a = 1
+            print(ml)
             for i in ml:
-                res['response']['text'] += f'{a}. {i.title} \n'
+                try:
+                    res['response']['text'] += f'{a}. {i.title} \n'
+                except Exception:
+                    res['response']['text'] += f'{a}. {i.title} \n'
                 a += 1
             res['response']['text'] += 'Вы хотите продолжить?\n'
             res['response']['buttons'] = [{'title': 'Да', 'hide': True},
@@ -1786,7 +1791,10 @@ def show_names(user_id):  # показ амундирования
             elif list_obj[i].__class__.__bases__[0].__name__ == 'MonsterBase':
                 text += f'{i + 1}) Монстр: "{list_obj[i].title}"; level={list_obj[i].level}\n'
             elif list_obj[i].__class__.__bases__[0].__name__ == 'RaceBase':
-                text += f'{i + 1}) Раса: "{dd[class_human.what]}"\n'
+                try:
+                    text += f'{i + 1}) Раса: "{dd[class_human.what]}"\n'
+                except Exception:
+                    text += f'{i + 1}) Раса: у вас нет расы\n'
     else:
         text += f'Ваши карты на руках: -\n'
     print(text)
@@ -1838,7 +1846,10 @@ def show_not_all_cards(user_id, res):
             res['response'][
                 'text'] += f'{i + 1}) Монстр: "{list_obj[i].title}" ({list_obj[i].level} lvl)\n'
         elif list_obj[i].__class__.__bases__[0].__name__ == 'RaceBase':
-            res['response']['text'] += f'{i + 1}) Раса: "{dd[class_human.what]}"\n'
+            try:
+                res['response']['text'] += f'{i + 1}) Раса: "{dd[class_human.what]}"\n'
+            except Exception:
+                res['response']['text'] += f'{i + 1}) Раса: у вас нет расы\n'
     res['response']['text'] += 'Какие карты вы хотите положить? (номера)'
 
 
