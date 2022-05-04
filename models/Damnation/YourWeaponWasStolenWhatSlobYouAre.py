@@ -10,4 +10,7 @@ class YourWeaponWasStolenWhatSlobYouAre(CurseBase):
 
     def use_bad_things(self, req, hero):  # проклятье на нас
         if len(hero["weapon"]) != 0:
-            del hero["weapon"][random.randint(0, len(hero["weapon"]))]
+            try:
+                del hero["weapon"][random.randint(0, len(hero["weapon"] - 1))]
+            except Exception:
+                pass
