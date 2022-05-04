@@ -1,14 +1,13 @@
-from models.сurses.UnbearablyVileCurseLoseYourRandomStuff import \
+from models.Damnation.UnbearablyVileCurseLoseYourRandomStuff import \
     UnbearablyVileCurseLoseYourRandomStuff
-from models.сurses.YourWeaponWasStolenWhatSlobYouAre import YourWeaponWasStolenWhatSlobYouAre
-from models.сurses.Lose2LevelsSoThatItWontBeHabitToPickUpBirdsInTheDungeonsFromNowOn import \
-    Lose2LevelsSoThatItWontBeHabitToPickUpBirdsInTheDungeonsFromNowOn
-from models.сurses.LoseTheLevel import LoseTheLevel
-from models.сurses.LoseTheArmorYoureWearing import LoseTheArmorYoureWearing
-from models.сurses.LoseTheShoesYoureWearing import LoseTheShoesYoureWearing
-from models.сurses.LoseTheFirebrandYoureWearing import LoseTheFirebrandYoureWearing
+from models.Damnation.YourWeaponWasStolenWhatSlobYouAre import YourWeaponWasStolenWhatSlobYouAre
+from models.Damnation.Lose2Levels import Lose2Levels
+from models.Damnation.LoseTheLevel import LoseTheLevel
+from models.Damnation.LoseTheArmorYoureWearing import LoseTheArmorYoureWearing
+from models.Damnation.LoseTheShoesYoureWearing import LoseTheShoesYoureWearing
+from models.Damnation.LoseTheFirebrandYoureWearing import LoseTheFirebrandYoureWearing
 
-curses = [Lose2LevelsSoThatItWontBeHabitToPickUpBirdsInTheDungeonsFromNowOn(),
+curses = [Lose2Levels(),
           LoseTheArmorYoureWearing(), LoseTheFirebrandYoureWearing(), LoseTheLevel(),
           LoseTheShoesYoureWearing(), UnbearablyVileCurseLoseYourRandomStuff(),
           YourWeaponWasStolenWhatSlobYouAre()]

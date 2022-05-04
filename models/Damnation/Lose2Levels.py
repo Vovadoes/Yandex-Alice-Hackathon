@@ -1,9 +1,9 @@
 from .CurseBase import CurseBase
 
 
-class Lose2LevelsSoThatItWontBeHabitToPickUpBirdsInTheDungeonsFromNowOn(CurseBase):
+class Lose2Levels(CurseBase):
     def __init__(self):
-        super(Lose2LevelsSoThatItWontBeHabitToPickUpBirdsInTheDungeonsFromNowOn, self).__init__(
+        super(Lose2Levels, self).__init__(
             'Потеряй 2 уровня, чтобы не повадно было впредь подбирать птиц в подземельях'
         )
 

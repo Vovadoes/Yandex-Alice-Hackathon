@@ -1,17 +1,21 @@
-from flask import Flask, request
-from flask_ngrok import run_with_ngrok
+# from flask import Flask, request
+# from flask_ngrok import run_with_ngrok
 import logging
 import json
 import random
-from classes import Monster, Bonus, Armament, Proklate, Race
+import pickle
+import codecs
 from bonuses import bonuses as bonuses_cards
 from monsters import monsters as monsters_cards
 from curses import curses as proklates_cards
 from armament import armament as armores_cards
 from race import race as race_cards
+from pprint import pprint
+import ydb
+import os
 
-app = Flask(__name__)
-run_with_ngrok(app)
+# app = Flask(__name__)
+# run_with_ngrok(app)
 
 logging.basicConfig(level=logging.INFO)
 
@@ -38,9 +42,47 @@ all_picturs = {'monster': ['1521359/cbb76ee4b27267769e5c',
                'дварф': ['1521359/0009a96980687b243207'], 'эльф': ['1533899/540e8191f506f23f37b0'],
                'хафлинг': ['1533899/ca930bb4e692625bd227']}
 
+# create driver in global space.
+driver = ydb.Driver(endpoint=os.getenv('YDB_ENDPOINT'), database=os.getenv('YDB_DATABASE'))
+# Wait for the driver to become active for requests.
+driver.wait(fail_fast=True, timeout=180)
+
+
+def get_user(driver, user_id):
+    query = ydb.ScanQuery(
+        f"""SELECT id, name FROM my_table
+            WHERE id == '{user_id}'""", {}
+    )
+
+    it = driver.table_client.scan_query(query)
+
+    while True:
+        try:
+            result = next(it)
+            return result.result_set.rows
+        except StopIteration:
+            break
+
+
+def update_user(session, id, name):
+    session.transaction().execute(
+        f"""UPDATE my_table SET name='{name}' WHERE id='{id}'""",
+        commit_tx=True,
+    )
+
+
+def create_user(session, id, name):
+    session.transaction().execute(
+        f"""INSERT INTO my_table (id, name) VALUES
+            ("{id}", "{name}");
+        """,
+        commit_tx=True,
+    )
+
 
 def main(event, context):
     global sessionStorage
+    global driver
     response = {  # то что отправляем
         'session': event['session'],
         'version': event['version'],
@@ -48,8 +90,30 @@ def main(event, context):
             'end_session': False
         }
     }
+    user_id = response['session']['user_id']
+    keys = sessionStorage.keys()
+    flag = False
+    if user_id not in keys:
+        res = get_user(driver, user_id)
+        print(f"{res=}")
+        if len(res) != 0:
+            user: dict = res[0]
+            code = user["name"].decode("utf-8")
+            print(f"{code=}")
+            unpickled = pickle.loads(codecs.decode(code.encode(), "base64"))
+            sessionStorage[user_id] = unpickled
+            print("It ts not new")
+        else:
+            flag = True
 
     handle_dialog(event, response)  # функция
+
+    code: str = codecs.encode(pickle.dumps(sessionStorage[user_id]), "base64").decode()
+    session = driver.table_client.session().create()
+    if flag:
+        create_user(session, user_id, code)
+    else:
+        update_user(session, user_id, code)
 
     return json.dumps(response)
 
@@ -62,7 +126,8 @@ def handle_dialog(req, res):
 
     if req['session']['new']:
         sessionStorage[user_id] = {'level': 1, 'epoch': '11', 'weapon': [],
-                                   'class': race_cards[random.randint(0, 2)], 'monster': None, 'overall_strength': 0,
+                                   'class': race_cards[random.randint(0, 2)], 'monster': None,
+                                   'overall_strength': 0,
                                    'bonus_strength': 0, 'money': 0, 'luck': 2,
                                    'armor': {'head': None, 'body': None, 'leg': None},
                                    'cards_on_hands': [], 'is_alive': True,
@@ -1856,4 +1921,3 @@ def show_not_all_cards(user_id, res):
             except Exception:
                 res['response']['text'] += f'{i + 1}) Раса: у вас нет расы\n'
     res['response']['text'] += 'Какие карты вы хотите положить? (номера)'
-
