@@ -32,13 +32,13 @@ dict_doors_for_game = {i: all_doors_for_game[i] for i in range(len(all_doors_for
 dict_doors_for_hero = {i: all_doors_for_hero[i] for i in range(len(all_doors_for_hero))}
 
 # картинки
-all_picturs = {'monster': ['1030494/e1435452e9dd4f75cc3e',
-                           '1533899/868213a90bf083d6b448', '213044/2c4d0f1e86e1d0c84e2d'],
-               'proklate': ['937455/b2c7f0c0f291a5764856'], 'head': ['1521359/20c21e3e7e251f904fd5'],
-               'body': ['937455/76cc0fc8dc7ee6d159f7'], 'leg': ['1540737/a9fc02657948b45808a9'],
-               'bonus': ['1652229/01993cb6a8d400fe8434'], 'weapon': ['1030494/06b2a534f4e9d79fe3e9'],
-               'дварф': ['1521359/571862d53def1faef7df'], 'эльф': ['1533899/27ad0f63c10be4f82a8f'],
-               'хафлинг': ['213044/f282d6ca277d0adb3506']}
+all_picturs = {'monster': ['1521359/cbb76ee4b27267769e5c',
+                           '1652229/e4a4c4f9a8383b7c5497', '1652229/ca2469bc833d995da0bb'],
+               'proklate': ['965417/5e0db306ecb8d6c76ef0'], 'head': ['1521359/fbf517e919e2a07f7fa5'],
+               'body': ['1521359/e35677d1985411762bcb'], 'leg': ['1030494/1efe863b5b43908679e6'],
+               'bonus': ['1533899/e3cbd21cacb462d4e482'], 'weapon': ['1030494/899f7a72796d5e905c43'],
+               'дварф': ['1521359/0009a96980687b243207'], 'эльф': ['1533899/540e8191f506f23f37b0'],
+               'хафлинг': ['1533899/ca930bb4e692625bd227']}
 
 # create driver in global space.
 driver = ydb.Driver(endpoint=os.getenv('YDB_ENDPOINT'), database=os.getenv('YDB_DATABASE'))
@@ -178,7 +178,7 @@ def handle_dialog(req, res, sessionStorage):
             sessionStorage[user_id]['is_write'] = True
             if sessionStorage[user_id]['last_word'][0] is None:
                  sessionStorage[user_id] = {'level': 1, 'epoch': '11', 'weapon': [],
-                                           'class': race_cards[random.randint(0, 2)],
+                                           'class': None,
                                            'monster': None,
                                            'overall_strength': 0,
                                            'bonus_strength': 0, 'money': 0, 'luck': 2,
@@ -1463,11 +1463,10 @@ def handle_dialog(req, res, sessionStorage):
                             count += int(i.price)
                             sessionStorage[user_id]['cards_on_hands'].remove(i)
                         res['response']['text'] = f'Вы получили за них: {count} монет\n'
-                        sessionStorage[user_id]["money"] += count
-                        level = sessionStorage[user_id]["money"] // 1000
+                        level = count // 1000
                         sessionStorage[user_id]['level'] += level
-                        ost = sessionStorage[user_id]["money"] % 1000
-                        sessionStorage[user_id]["money"] = ost
+                        ost = count % 1000
+                        sessionStorage[user_id]["money"] += ost
                         res['response'][
                             'text'] += f'У вас {sessionStorage[user_id]["money"]} монет\n'
                         res['response']['text'] += f'+{level} level\n'
@@ -1796,7 +1795,6 @@ def pull_out_card_door(user_id, res, sessionStorage):  # Вытягиваем к
 
         smth = dict_doors_for_hero[id]
         if smth.__class__.__bases__[0].__name__ == 'RaceBase':  # раса
-            print('расссссаааа')
             # картинка
             res['response']['card'] = {}
             res['response']['card']['type'] = 'BigImage'
@@ -1806,17 +1804,17 @@ def pull_out_card_door(user_id, res, sessionStorage):  # Вытягиваем к
             if smth.what == 1:  # эльф
                 res['response']['card']['description'] += 'Эльф\n'
                 res['response']['card']['description'] += smth.title + '\n'
-                res['response']['card']['image_id'] = all_picturs['эльф'][0]
+                res['response']['card']['image_id'] = all_picturs['эльф']
                 sessionStorage[user_id]['cards_on_hands'].append(smth)
             elif smth.what == 2:  # хафлинг
                 res['response']['card']['description'] += 'Хафлинг\n'
                 res['response']['card']['description'] += smth.title + '\n'
-                res['response']['card']['image_id'] = all_picturs['хафлинг'][0]
+                res['response']['card']['image_id'] = all_picturs['хафлинг']
                 sessionStorage[user_id]['cards_on_hands'].append(smth)
             elif smth.what == 3:  # дварф
                 res['response']['card']['description'] += 'Дварф\n'
                 res['response']['card']['description'] += smth.title + '\n'
-                res['response']['card']['image_id'] = all_picturs['дварф'][0]
+                res['response']['card']['image_id'] = all_picturs['дварф']
                 sessionStorage[user_id]['cards_on_hands'].append(smth)
             return 4
         else:  # монстр
@@ -1966,16 +1964,15 @@ def is_all_right(user_id, nums, sessionStorage):  # проверяем на пр
         sessionStorage[user_id]['armor']['leg'] = cards_choose['leg'][0]
         all_names_cards += f"{cards_choose['leg'][0].title}\n"
     if len(cards_choose['weapon']) != 0:
+        sessionStorage[user_id]['weapon'] = cards_choose['weapon']
         if len(cards_choose['weapon']) == 1:
             all_names_cards += f"{cards_choose['weapon'][0].title}\n"
             sessionStorage[user_id]['overall_strength'] += cards_choose['weapon'][0].bonus
-            sessionStorage[user_id]['weapon'].append(cards_choose['weapon'][0])
         else:
             all_names_cards += f"{cards_choose['weapon'][0].title}\n"
             all_names_cards += f"{cards_choose['weapon'][1].title}\n"
             sessionStorage[user_id]['overall_strength'] += cards_choose['weapon'][0].bonus
             sessionStorage[user_id]['overall_strength'] += cards_choose['weapon'][1].bonus
-            sessionStorage[user_id]['weapon'] = cards_choose['weapon']
     if len(cards_choose['Race']) != 0:
         sessionStorage[user_id]['class'] = cards_choose['Race'][0]
         dd = {1: 'Эльф', 2: 'Хафлинг', 3: 'Дварф'}
