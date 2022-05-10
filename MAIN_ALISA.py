@@ -48,36 +48,6 @@ all_picturs = {'monster': ['1030494/e1435452e9dd4f75cc3e',
 # driver.wait(fail_fast=True, timeout=180)
 
 
-def get_user(driver, user_id):
-    query = ydb.ScanQuery(
-        f"""SELECT id, name FROM my_table
-            WHERE id == '{user_id}'""", {}
-    )
-
-    it = driver.table_client.scan_query(query)
-
-    while True:
-        try:
-            result = next(it)
-            return result.result_set.rows
-        except StopIteration:
-            break
-
-
-def update_user(session, id, name):
-    session.transaction().execute(
-        f"""UPDATE my_table SET name='{name}' WHERE id='{id}'""",
-        commit_tx=True,
-    )
-
-
-def create_user(session, id, name):
-    session.transaction().execute(
-        f"""INSERT INTO my_table (id, name) VALUES
-            ("{id}", "{name}");
-        """,
-        commit_tx=True,
-    )
 
 
 @app.route('/', methods=['POST'])

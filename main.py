@@ -44,6 +44,14 @@ all_picturs = {'monster': ['1030494/e1435452e9dd4f75cc3e',
 driver = ydb.Driver(endpoint=os.getenv('YDB_ENDPOINT'), database=os.getenv('YDB_DATABASE'))
 # Wait for the driver to become active for requests.
 driver.wait(fail_fast=True, timeout=180)
+numbers_norm_slang = {'ноль': '0', 'один': '1', 'два': '2', 'три': '3', 'четыре': '4', 'пять': '5',
+                      'шесть': '6',
+                      'семь': '7', 'восемь': '8', 'девять': '9', 'деcять': '10',
+                      'одиннадцать': '11', 'двенадцать': '12', 'тринадцать': '13',
+                      'четырнадцать': '14',
+                      'пятнадцать': '15', 'шестнадцать': '16', 'семнадцать': '17',
+                      'восемнадцать': '18',
+                      'девятнадцать': '19', 'двадцать': '20'}
 
 
 def get_user(driver, user_id):
@@ -109,11 +117,13 @@ def main(event, context):
         response['response']['buttons'].append({'title': 'Что ты умеешь', 'hide': True})
     except:
         response['response']['buttons'] = [{'title': 'Помощь', 'hide': True},
-                                      {'title': 'Что ты умеешь', 'hide': True}]
+                                           {'title': 'Что ты умеешь', 'hide': True}]
     try:
         if sessionStorage[user_id]['is_write']:
             try:
-                sessionStorage[user_id]['last_word'] = [sessionStorage[user_id]['last_epoch'], event['request']['original_utterance'].lower()]
+                sessionStorage[user_id]['last_word'] = [sessionStorage[user_id]['last_epoch'],
+                                                        event['request'][
+                                                            'original_utterance'].lower()]
             except:
                 sessionStorage[user_id]['last_word'] = [sessionStorage[user_id]['epoch'],
                                                         event['request'][
@@ -144,7 +154,8 @@ def handle_dialog(req, res, sessionStorage):
                                    'cards_on_hands': [], 'is_alive': True,
                                    'what_treasures_stay': list(range(len(dict_treasures))),
                                    'what_doors_stay': list(range(len(dict_doors_for_hero))),
-                                   'cards_to_sell': None, 'last_word': [], 'is_write': True, 'last_epoch': None}
+                                   'cards_to_sell': None, 'last_word': [], 'is_write': True,
+                                   'last_epoch': None}
         # Заполняем текст ответа
         res['response']['text'] = 'Привет! Добро пожаловать в игру "mini Манчкин"!' \
                                   ' Ты уже знаешь правила этой игры!?'
@@ -165,9 +176,10 @@ def handle_dialog(req, res, sessionStorage):
         return
     if req['request']['original_utterance'].lower() in ['что ты умеешь']:
         sessionStorage[user_id]['is_write'] = False
-        res['response']['text'] = 'Пока я умею задавать вам вопросы, чтобы воплощать игру Манчкин онлайн!' \
-                                  ' Но вы не расстраивайтесь из-за моего функционала, так как в будущем я смогу играть с вами как настоящий противник!' \
-                                  ' Вы готовы продолжить?'
+        res['response']['text'] = 'Я ваш ассистент по игре Манчкин.' \
+                                  ' Я задаю вам вопросы, а вы должны правильно на них отвечать. ' \
+                                  'Иногда можно говорить да/нет, но в некоторых случаях придется говорить цифры для выбора варианта. ' \
+                                  'Если вы будете отвечать правильно, то вы точно сможете пройти эту игру! Вы готовы продолжить?'
         res['response']['buttons'] = [{'title': 'Да', 'hide': True}, {'title': 'Нет', 'hide': True}]
         res['response']["tts"] = res['response']['text']
         sessionStorage[user_id]['epoch'] = 'dop'
@@ -177,7 +189,7 @@ def handle_dialog(req, res, sessionStorage):
                                                             'понятно', 'дальше']:
             sessionStorage[user_id]['is_write'] = True
             if sessionStorage[user_id]['last_word'][0] is None:
-                 sessionStorage[user_id] = {'level': 1, 'epoch': '11', 'weapon': [],
+                sessionStorage[user_id] = {'level': 1, 'epoch': '11', 'weapon': [],
                                            'class': race_cards[random.randint(0, 2)],
                                            'monster': None,
                                            'overall_strength': 0,
@@ -187,22 +199,22 @@ def handle_dialog(req, res, sessionStorage):
                                            'what_treasures_stay': list(range(len(dict_treasures))),
                                            'what_doors_stay': list(range(len(dict_doors_for_hero))),
                                            'cards_to_sell': None, 'last_word': [], 'is_write': True}
-                 # Заполняем текст ответа
-                 res['response']['text'] = 'Привет! Добро пожаловать в игру "mini Манчкин"!' \
+                # Заполняем текст ответа
+                res['response']['text'] = 'Привет! Добро пожаловать в игру "mini Манчкин"!' \
                                           ' Ты уже знаешь правила этой игры!?'
-                 # Получим подсказки
-                 res['response']['buttons'] = [{'title': 'Да', 'hide': True},
+                # Получим подсказки
+                res['response']['buttons'] = [{'title': 'Да', 'hide': True},
                                               {'title': 'Нет', 'hide': True}]
-                 res['response']["tts"] = 'Привет! Добро пожаловать в игру "mini Манчкин"!' \
+                res['response']["tts"] = 'Привет! Добро пожаловать в игру "mini Манчкин"!' \
                                          ' Ты уже знаешь правила этой игры?'
-                 return
+                return
             try:
-               sessionStorage[user_id]['epoch'] = sessionStorage[user_id]['last_word'][0]
-               req['request']['original_utterance'] = sessionStorage[user_id]['last_word'][1]
-               print(sessionStorage[user_id]['epoch'], req['request']['original_utterance'])
-               print('try')
+                sessionStorage[user_id]['epoch'] = sessionStorage[user_id]['last_word'][0]
+                req['request']['original_utterance'] = sessionStorage[user_id]['last_word'][1]
+                print(sessionStorage[user_id]['epoch'], req['request']['original_utterance'])
+                print('try')
             except:  # новый пользователь
-               print('except')
+                print('except')
         elif req['request']['original_utterance'].lower() in ['нет', 'не понял', 'не хочу',
                                                               'не надо', 'стоп']:
             res['response']['text'] = 'Приходите когда будете готовы! До скорых встреч!'
@@ -373,6 +385,9 @@ def handle_dialog(req, res, sessionStorage):
                         word += x
                 if word.isdigit():
                     num.append(word)
+                else:
+                    if word in numbers_norm_slang:
+                        num.append(numbers_norm_slang[word])
             # проверка
             if len(num) == 0:
                 res['response'][
@@ -479,20 +494,23 @@ def handle_dialog(req, res, sessionStorage):
                 if class_card == 1:  # пользователю попался монстр
                     sessionStorage[user_id]['epoch'] = '20'
                     res['response'][
-                        "tts"] = 'Вы стучитесь в дверь, и вам выпал монстр. Вы готовы сражаться?'
+                        "tts"] = res['response']['card']['title'] + ' ' + res['response']['card'][
+                        'description']  # 'Вы стучитесь в дверь, и вам выпал монстр. Вы готовы сражаться?'
                 elif class_card == 3:  # пользователь получил проклятье
                     res['response']['card']['title'] = 'Вы готовы продолжать?'
                     res['response']['buttons'] = [{'title': 'Да', 'hide': True},
                                                   {'title': 'Нет', 'hide': True}]
                     res['response'][
-                        "tts"] = 'Вы стучитесь в дверь, и вам выпало проклятье. Вы готовы продолжать?'
+                        "tts"] = res['response']['card'][
+                        'description'] + ' Вы готовы продолжать?'
                     sessionStorage[user_id]['epoch'] = '30'
                 elif class_card == 4:  # выпала расса
                     res['response']['card']['title'] = 'Вы готовы продожать?'
                     res['response']['buttons'] = [{'title': 'Да', 'hide': True},
                                                   {'title': 'Нет', 'hide': True}]
                     res['response'][
-                        "tts"] = 'Вы стучитесь в дверь, и вам выпала раса. Вы готовы продолжать?'
+                        "tts"] = 'Вы стучитесь в дверь, и ' + res['response']['card']['description'] \
+                                 + ' ' + res['response']['card']['title']
                     sessionStorage[user_id]['epoch'] = '30'
             elif req['request']['original_utterance'].lower() in ['нет', 'не понял', 'не хочу',
                                                                   'не надо', 'стоп']:
@@ -613,20 +631,23 @@ def handle_dialog(req, res, sessionStorage):
                 if class_card == 1:  # пользователю попался монстр
                     sessionStorage[user_id]['epoch'] = '20'
                     res['response'][
-                        "tts"] = 'Вы стучитесь в дверь, и вам выпал монстр. Вы готовы сражаться?'
+                        "tts"] = res['response']['card']['title'] + ' ' + res['response']['card'][
+                        'description']
                 elif class_card == 3:  # пользователь получил проклятье
                     res['response']['card']['title'] = 'Вы готовы продолжать?'
                     res['response']['buttons'] = [{'title': 'Да', 'hide': True},
                                                   {'title': 'Нет', 'hide': True}]
                     res['response'][
-                        "tts"] = 'Вы стучитесь в дверь, и вам выпало проклятье. Вы готовы продолжать?'
+                        "tts"] = res['response']['card'][
+                        'description'] + ' Вы готовы продолжать?'
                     sessionStorage[user_id]['epoch'] = '30'
                 elif class_card == 4:  # выпала расса
-                    res['response']['card']['title'] = 'Вы готовы продожать?'
+                    res['response']['card']['title'] = 'Вы готовы продолжать?'
                     res['response']['buttons'] = [{'title': 'Да', 'hide': True},
                                                   {'title': 'Нет', 'hide': True}]
                     res['response'][
-                        "tts"] = 'Вы стучитесь в дверь, и вам выпала раса. Вы готовы продолжать?'
+                        "tts"] = 'Вы стучитесь в дверь, и ' + res['response']['card']['description'] \
+                                 + ' ' + res['response']['card']['title']
                     sessionStorage[user_id]['epoch'] = '30'
                 # показываем карту и смотря какой класс используем функцию
             else:  # не поняли
@@ -750,6 +771,9 @@ def handle_dialog(req, res, sessionStorage):
                         word += x
                 if word.isdigit():
                     num.append(word)
+                else:
+                    if word in numbers_norm_slang:
+                        num.append(numbers_norm_slang[word])
             if len(num) == 0:
                 res['response'][
                     'text'] = 'В вашем ответе отсутствуют цифры! Введите цифры! Например 1, 2...\n'
@@ -811,7 +835,7 @@ def handle_dialog(req, res, sessionStorage):
                                                   {'title': 'Нет', 'hide': True}]
                     res['response'][
                         "tts"] = f'Ваши бонусы приняты! Ваша сила: {sessionStorage[user_id]["overall_strength"] + sessionStorage[user_id]["level"] + sessionStorage[user_id]["bonus_strength"]}\nСила монстра: {sessionStorage[user_id]["monster"].level} ' + 'Вы хотите положить еще бонусы?'
-                    sessionStorage[user_id]['epoch'] = '25'
+                    sessionStorage[user_id]['epoch'] = '29'
                 else:
                     # проверка может быть он выигрывает!!!
                     if sessionStorage[user_id]["overall_strength"] + sessionStorage[user_id][
@@ -935,6 +959,64 @@ def handle_dialog(req, res, sessionStorage):
                 res['response']['buttons'] = [{'title': 'Да', 'hide': True},
                                               {'title': 'Нет', 'hide': True}]
                 res['response']["tts"] = 'Я вас не поняла, извините. Так да или нет?'
+        elif sessionStorage[user_id]['epoch'] == '29':
+            if req['request']['original_utterance'].lower() in ['да', 'хорошо', 'ок', 'ладно',
+                                                                'понятно', 'дальше']:
+                text = choose_bonus(user_id, sessionStorage)
+                res['response']['text'] = text
+                res['response']['text'] += 'Какие бонусы вы хотите выбрать? (номера)'
+                res['response']['buttons'] = [{'title': 'Никакие', 'hide': True}]
+                res['response']["tts"] = 'Какие бонусы вы хотите выбрать? номера'
+                sessionStorage[user_id]['epoch'] = '28'
+            elif req['request']['original_utterance'].lower() in ['нет', 'не понял', 'не хочу',
+                                                                  'не надо',
+                                                                  'стоп']:
+                # проверка может быть он выигрывает!!!
+                if sessionStorage[user_id]["overall_strength"] + sessionStorage[user_id][
+                    "level"] + \
+                        sessionStorage[user_id]["bonus_strength"] > sessionStorage[user_id][
+                    "monster"].level:
+                    catch_bonus(user_id, res, sessionStorage)  # будет картинка
+                    res['response']['card']['title'] = 'Вы его выйграли! ' + \
+                                                       res['response']['card'][
+                                                           'title']
+                    sessionStorage[user_id]["bonus_strength"] = 0
+                    sessionStorage[user_id]['monster'] = None
+                    sessionStorage[user_id]['epoch'] = '33'
+                else:
+                    num = random.randint(1, 6)
+                    res['response'][
+                        'text'] = f'У вас нет бонусов, которые могут вам помочь, вам придётся убегать! Подбрасываю кубик иии вам выпало {num}.\n'
+                    what, text = do_bad_things_with_hero(user_id, num, sessionStorage)
+                    if what == 1:  # смог убежать
+                        res['response']['text'] += text
+                        # условие больше 5 карт и начинаем от щедрот
+                        res['response']['text'] += 'Вы готовы продолжать?'
+                        sessionStorage[user_id]['epoch'] = '33'
+                        res['response']['buttons'] = [{'title': 'Да', 'hide': True},
+                                                      {'title': 'Нет', 'hide': True}]
+                        res['response'][
+                            "tts"] = f'У вас нет бонусов, которые могут вам помочь, вам придётся убегать! Подбрасываю кубик и вам выпало {num}. ' + 'Вы смогли убежать! ' + 'Вы готовы продолжать?'
+                    elif what == 2:  # выжил
+                        res['response']['text'] += text
+                        res['response'][
+                            'text'] += 'Вы выжили после этого!? Это удивительно!! Идем дальше! '
+                        # условие больше 5 карт и начинаем от щедрот
+                        res['response']['text'] += 'Вы готовы продолжать?'
+                        sessionStorage[user_id]['epoch'] = '33'
+                        res['response']['buttons'] = [{'title': 'Да', 'hide': True},
+                                                      {'title': 'Нет', 'hide': True}]
+                        res['response'][
+                            "tts"] = f'У вас нет бонусов, которые могут вам помочь, вам придётся убегать! Подбрасываю кубик и вам выпало {num}. ' + 'Вы не смогли убежать, но выжили! ' + 'Вы готовы продолжать?'
+                    else:  # Умер
+                        res['response']['text'] += text
+                        res['response'][
+                            'text'] += 'Вы умерли - как жалко это признавать. Вы хотите играть дальше?'
+                        res['response']['buttons'] = [{'title': 'Да', 'hide': True},
+                                                      {'title': 'Нет', 'hide': True}]
+                        res['response']["tts"] = res['response'][
+                            "tts"] = f'У вас нет бонусов, которые могут вам помочь, вам придётся убегать! Подбрасываю кубик и вам выпало {num}. ' + 'Вы умерли! ' + 'Вы хотите играть дальше?'
+                        sessionStorage[user_id]['epoch'] = '213'  # продаем карты
     elif sessionStorage[user_id]['epoch'][0] == '3':
         if sessionStorage[user_id]['epoch'] == '30':
             if req['request']['original_utterance'].lower() in ['да', 'хорошо', 'ок', 'ладно',
@@ -1030,6 +1112,9 @@ def handle_dialog(req, res, sessionStorage):
                         word += x
                 if word.isdigit():
                     num.append(word)
+                else:
+                    if word in numbers_norm_slang:
+                        num.append(numbers_norm_slang[word])
             # проверка
             if len(num) == 0:
                 res['response'][
@@ -1215,6 +1300,9 @@ def handle_dialog(req, res, sessionStorage):
                         word += x
                 if word.isdigit():
                     num.append(word)
+                else:
+                    if word in numbers_norm_slang:
+                        num.append(numbers_norm_slang[word])
             if len(num) == 0:
                 res['response'][
                     'text'] = 'В вашем ответе отсутствуют цифры! Введите цифры! Например 1, 2...\n'
@@ -1373,6 +1461,9 @@ def handle_dialog(req, res, sessionStorage):
                             word += x
                     if word.isdigit():
                         num.append(word)
+                    else:
+                        if word in numbers_norm_slang:
+                            num.append(numbers_norm_slang[word])
                 # проверка
                 if len(num) == 0:
                     res['response'][
@@ -1536,6 +1627,9 @@ def handle_dialog(req, res, sessionStorage):
                             word += x
                     if word.isdigit():
                         num.append(word)
+                    else:
+                        if word in numbers_norm_slang:
+                            num.append(numbers_norm_slang[word])
                 # проверка
                 if len(num) == 0:
                     res['response'][
@@ -1660,6 +1754,8 @@ def catch_door(user_id, res, sessionStorage):
         res['response']['card']['image_id'] = random.choice(all_picturs['monster'])
         sessionStorage[user_id]['cards_on_hands'].append(dict_doors_for_hero[ids_doors])
         res['response']["tts"] = 'Чистим нычки! Берем карту с дверью, и вам выпадает монстр'
+    res['response']["tts"] = res['response']['card']['description'] + ' ' + res['response']['card'][
+        'title']
     res['response']['buttons'] = [{'title': 'Да', 'hide': True},
                                   {'title': 'Нет', 'hide': True}]
 
@@ -1681,6 +1777,8 @@ def del_all_things(user_id, sessionStorage):
     sessionStorage[user_id]['armor'] = {'head': None, 'body': None, 'leg': None}
     sessionStorage[user_id]['cards_on_hands'] = []
     sessionStorage[user_id]['is_alive'] = True
+    sessionStorage[user_id]['overall_strength'] = 0
+    sessionStorage[user_id]['bonus_strength'] = 0
 
 
 def do_bad_things_with_hero(user_id, num, sessionStorage):
@@ -1759,13 +1857,14 @@ def catch_bonus(user_id, res, sessionStorage):  # текст для вывода
     res['response']['card']['description'] = text
     res['response']['buttons'] = [{'title': 'Да', 'hide': True},
                                   {'title': 'Нет', 'hide': True}]
-    res['response']["tts"] = 'Вы победили! Вы получили бонусы!'
+    res['response']["tts"] = 'Вы победили! Вы получили бонусы: ' + res['response']['card'][
+        'description'] + ' Вы готовы продолжать?'
 
 
 def pull_out_card_door(user_id, res, sessionStorage):  # Вытягиваем карту двери
     global dict_doors_for_hero
     what_bring = random.randint(1, 10)
-    if what_bring == 10:  # проклятье
+    if what_bring == 10 or what_bring == 9:  # проклятье
         prokl = random.choice(proklates_cards)
         # картинка
         res['response']['card'] = {}
@@ -1775,7 +1874,7 @@ def pull_out_card_door(user_id, res, sessionStorage):  # Вытягиваем к
         res['response']['card']['description'] = ''
         # другое
         res['response']['text'] += f'Вам выпало проклятье: {prokl.title}\n'
-        res['response']['text'] += f'Но вы остались живи и продолжаете путешествовать!\n'
+        res['response']['text'] += f'Но вы остались живы и продолжаете путешествовать!\n'
         # применяем проклятье
         prokl.use_bad_things('', sessionStorage[user_id])
         # доб текст
@@ -1992,8 +2091,19 @@ def is_all_right(user_id, nums, sessionStorage):  # проверяем на пр
         all_names_cards += f"{cards_choose['Bonus'][0].title} * {len(cards_choose['Bonus'])}\n"
     all_names_cards += '---------\n'
     # удаляем карточки, которые использовали
-    for i in range(len(nums)):
-        sessionStorage[user_id]['cards_on_hands'].pop(nums[i] - i)
+    print(sessionStorage[user_id]['cards_on_hands'])
+    print(nums)
+    # for i in range(len(nums)):
+    #     sessionStorage[user_id]['cards_on_hands'].pop(nums[i] - i)
+    # for i in range(len(nums)):
+    #     print(sessionStorage[user_id]['cards_on_hands'][nums[i] - i].title)
+    #     sessionStorage[user_id]['cards_on_hands'].remove(
+    #         sessionStorage[user_id]['cards_on_hands'][nums[i] - i])
+    cards_my_r = []
+    for i in range(len(sessionStorage[user_id]['cards_on_hands'])):
+        if i not in nums:
+            cards_my_r.append(sessionStorage[user_id]['cards_on_hands'][i])
+    sessionStorage[user_id]['cards_on_hands'] = cards_my_r
     return True, all_names_cards + 'Ваши действия применились для героя! Он стал сильнее!!!\n'
 
 
@@ -2157,7 +2267,7 @@ def show_not_all_cards(user_id, res, sessionStorage):
                 'text'] += f'{i + 1}) Монстр: "{list_obj[i].title}" ({list_obj[i].level} lvl)\n'
         elif list_obj[i].__class__.__bases__[0].__name__ == 'RaceBase':
             try:
-                res['response']['text'] += f'{i + 1}) Раса: "{dd[class_human.what]}"\n'
+                res['response']['text'] += f'{i + 1}) Раса: "{dd[list_obj[i].what]}"\n'
             except Exception:
-                res['response']['text'] += f'{i + 1}) Раса: у вас нет расы\n'
+                pass
     res['response']['text'] += 'Какие карты вы хотите положить? (номера)'
